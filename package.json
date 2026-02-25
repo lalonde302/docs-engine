@@ -1,0 +1,40 @@
+{
+	"name": "numanity-docs",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "next dev",
+		"prebuild": "bash scripts/fetch-content.sh && node scripts/generate-config.mjs",
+		"build": "next build",
+		"generate-config": "node scripts/generate-config.mjs",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@scalar/api-reference-react": "^0.4.0",
+		"gray-matter": "^4.0.3",
+		"js-yaml": "^4.1.1",
+		"mermaid": "^11.12.2",
+		"next": "^15.1.0",
+		"next-auth": "^5.0.0-beta.25",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-markdown": "^9.0.1",
+		"rehype-highlight": "^7.0.1",
+		"rehype-raw": "^7.0.0",
+		"remark-gfm": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/js-yaml": "^4.0.9",
+		"@types/node": "^22.10.0",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"autoprefixer": "^10.4.20",
+		"eslint": "^9.16.0",
+		"eslint-config-next": "^15.1.0",
+		"postcss": "^8.4.49",
+		"tailwindcss": "^3.4.16",
+		"typescript": "^5.7.0"
+	}
+}

@@ -1,0 +1,178 @@
+/**
+ * Site Configuration
+ *
+ * Multi-tenant docs engine configuration. The exported `siteConfig` is either:
+ * 1. Generated from `content/site.config.json` at build time (when CONTENT_REPO is set)
+ * 2. The hardcoded Numanity default below (when no external config exists)
+ *
+ * To rebrand for a different project, provide a site.config.json in your content repo.
+ * Run `npm run generate-config` (or let prebuild handle it) to regenerate this file.
+ */
+
+export interface SiteConfig {
+	name: string;
+	shortName: string;
+	description: string;
+	titleSuffix: string;
+
+	auth: {
+		enabled: boolean;
+		provider: 'google';
+		domain?: string;
+	};
+
+	sections: Record<string, { title: string; description: string; order: number }>;
+
+	tabs: {
+		docs: { label: string; sections: string[] };
+		api: { label: string };
+		learn: { label: string; sections: string[] };
+		archive: { label: string; sections: string[] };
+	};
+
+	features: {
+		apiReference: boolean;
+		chatPanel: boolean;
+		adrTracks: boolean;
+	};
+
+	theme: {
+		colors: {
+			primary: Record<string, string>;
+			brand: Record<string, string>;
+		};
+		light: ThemeVars;
+		dark: ThemeVars;
+	};
+}
+
+export interface ThemeVars {
+	background: string;
+	foreground: string;
+	sidebarBg: string;
+	sidebarBorder: string;
+	codeBg: string;
+	accent: string;
+	accentLight: string;
+}
+
+const defaultConfig: SiteConfig = {
+	name: 'Numanity',
+	shortName: 'N',
+	description: 'Internal portal for Numanity',
+	titleSuffix: 'Numanity Docs',
+
+	auth: {
+		enabled: true,
+		provider: 'google',
+		domain: 'numanity.us',
+	},
+
+	sections: {
+		guides: {
+			title: 'Guides',
+			description: 'Best practices and how-to guides for the team.',
+			order: 1,
+		},
+		designs: {
+			title: 'Designs',
+			description: 'Design documents, RFCs, and feature proposals.',
+			order: 2,
+		},
+		adr: {
+			title: 'ADRs',
+			description: 'Architecture Decision Records documenting key technical decisions.',
+			order: 3,
+		},
+		reference: {
+			title: 'Reference',
+			description: 'Technical references and system documentation.',
+			order: 4,
+		},
+		operations: {
+			title: 'Operations',
+			description: 'CI/CD, deployment, and operational runbooks.',
+			order: 5,
+		},
+		projects: {
+			title: 'Projects',
+			description: 'In-progress and experimental feature documentation.',
+			order: 6,
+		},
+		archive: {
+			title: 'Archive',
+			description: 'Miscellaneous records, notes, and archived documents.',
+			order: 7,
+		},
+	},
+
+	tabs: {
+		docs: { label: 'Docs', sections: ['reference', 'adr', 'operations'] },
+		api: { label: 'API' },
+		learn: { label: 'Learn', sections: ['guides', 'designs', 'projects'] },
+		archive: { label: 'Archive', sections: ['archive'] },
+	},
+
+	features: {
+		apiReference: true,
+		chatPanel: true,
+		adrTracks: true,
+	},
+
+	theme: {
+		colors: {
+			primary: {
+				'50': '#f6f9f7',
+				'100': '#e8f0eb',
+				'200': '#d1e1d7',
+				'300': '#a8c7b4',
+				'400': '#7aa88a',
+				'500': '#5a8a6a',
+				'600': '#476f54',
+				'700': '#3a5a45',
+				'800': '#314a3a',
+				'900': '#2a3e31',
+				'950': '#162119',
+			},
+			brand: {
+				'50': '#f4f9f6',
+				'100': '#e0ede6',
+				'200': '#c2dace',
+				'300': '#96bfa8',
+				'400': '#6a9e80',
+				'500': '#4a8264',
+				'600': '#3a6850',
+				'700': '#315443',
+				'800': '#1B4D3E',
+				'900': '#1a3a30',
+				'950': '#0e211b',
+			},
+		},
+		light: {
+			background: '#ffffff',
+			foreground: '#1a1a1a',
+			sidebarBg: '#f8faf9',
+			sidebarBorder: '#d1e7dd',
+			codeBg: '#f4f9f6',
+			accent: '#1B4D3E',
+			accentLight: '#3a6850',
+		},
+		dark: {
+			background: '#111714',
+			foreground: '#d4ddd8',
+			sidebarBg: '#151c18',
+			sidebarBorder: '#263830',
+			codeBg: '#1a2420',
+			accent: '#7aa88a',
+			accentLight: '#96bfa8',
+		},
+	},
+};
+
+export { defaultConfig };
+
+/**
+ * Active config. When building with an external content repo, the generate-config
+ * script replaces this line with the JSON-derived config. Otherwise it's the default.
+ */
+export const siteConfig: SiteConfig = defaultConfig;
