@@ -28,6 +28,10 @@ Or set `CONTENT_REPO` and run `npm run build` (prebuild will clone into `content
 
 - Next.js 15 (App Router), Tailwind, NextAuth (Google), react-markdown, Scalar API Reference (optional). See `site.config.ts` and the content repo’s `site.config.json` for sections, tabs, theme, and feature flags.
 
+## CI and deployment
+
+Do **not** add GitHub Actions here for build or deploy. Those workflows live in **content repos** (each project clones this engine and passes `CONTENT_REPO`). See `.github/README.md` in this repo.
+
 ## Upstream
 
 This codebase was extracted for reuse. Related lineages may publish their own copies; treat this repository as the **canonical engine** for consumers that depend on it.
