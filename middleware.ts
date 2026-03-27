@@ -1,9 +1,9 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
-import { siteConfig } from '@/site.config';
+import { authEnabled } from '@/lib/generatedAuthFlags';
 
 function shouldSkipAuth() {
-	if (!siteConfig.auth.enabled) return true;
+	if (!authEnabled) return true;
 
 	const flag = process.env.SKIP_AUTH;
 	if (flag === 'true') return true;
@@ -15,17 +15,14 @@ function shouldSkipAuth() {
 export default auth((req) => {
 	const { pathname } = req.nextUrl;
 
-	// Skip auth entirely if configured (for local development)
 	if (shouldSkipAuth()) {
 		return NextResponse.next();
 	}
 
-	// Allow auth-related routes
 	if (pathname.startsWith('/auth/') || pathname.startsWith('/api/auth/')) {
 		return NextResponse.next();
 	}
 
-	// Allow static files and Next.js internals
 	if (
 		pathname.startsWith('/_next/') ||
 		pathname.startsWith('/favicon') ||
@@ -34,7 +31,6 @@ export default auth((req) => {
 		return NextResponse.next();
 	}
 
-	// Check if user is authenticated
 	if (!req.auth) {
 		const signInUrl = new URL('/auth/signin', req.url);
 		signInUrl.searchParams.set('callbackUrl', pathname);
@@ -46,12 +42,6 @@ export default auth((req) => {
 
 export const config = {
 	matcher: [
-		/*
-		 * Match all request paths except:
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 */
 		'/((?!_next/static|_next/image|favicon.ico).*)',
 	],
 };

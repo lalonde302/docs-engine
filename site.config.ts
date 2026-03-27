@@ -314,7 +314,7 @@ export const siteConfig: SiteConfig = {
 		}
 	},
 	"landing": {
-		"audience": "For TradeYard internal team",
+		"audience": "For TradeYard partners",
 		"partnerHeadline": "One place for how we build TradeYard — in plain English",
 		"partnerLead": "This site is our shared playbook. It records what we decided and why, what we are building for contractors and suppliers, and how we operate the product safely (auth, payments, data, releases). You do not need to read every technical page: start here, then use the sections below when you want detail.",
 		"valueBullets": [
