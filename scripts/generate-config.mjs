@@ -28,16 +28,19 @@ const serialized = JSON.stringify(json, null, '\t');
 
 let source = fs.readFileSync(SITE_CONFIG_TS, 'utf-8');
 
-const marker = 'export const siteConfig: SiteConfig = defaultConfig;';
-if (!source.includes(marker)) {
-	console.error('[generate-config] Could not find siteConfig assignment marker in site.config.ts');
+const defaultMarker = 'export const siteConfig: SiteConfig = defaultConfig;';
+const patchedRe = /export const siteConfig: SiteConfig = \{[\s\S]*?\} as SiteConfig;/;
+
+const replacement = `export const siteConfig: SiteConfig = ${serialized} as SiteConfig;`;
+
+if (source.includes(defaultMarker)) {
+	source = source.replace(defaultMarker, replacement);
+} else if (patchedRe.test(source)) {
+	source = source.replace(patchedRe, replacement);
+} else {
+	console.error('[generate-config] Could not find siteConfig assignment in site.config.ts');
 	process.exit(1);
 }
-
-source = source.replace(
-	marker,
-	`export const siteConfig: SiteConfig = ${serialized} as SiteConfig;`,
-);
 
 fs.writeFileSync(SITE_CONFIG_TS, source, 'utf-8');
 console.log('[generate-config] site.config.ts patched successfully.');

@@ -9,11 +9,29 @@
  * Run `npm run generate-config` (or let prebuild handle it) to regenerate this file.
  */
 
+export interface LandingConfig {
+	/** Small label above the headline, e.g. who this page is for */
+	audience?: string;
+	/** Plain-language headline for non-technical readers */
+	partnerHeadline: string;
+	/** 2–4 sentences: what this site is, why it exists, what decisions it captures */
+	partnerLead: string;
+	/** Short bullets: what a partner gets from reading */
+	valueBullets?: string[];
+	/** Optional callout (e.g. where to ask questions) */
+	callout?: string;
+	/** Heading above the doc section cards */
+	browseTitle?: string;
+}
+
 export interface SiteConfig {
 	name: string;
 	shortName: string;
 	description: string;
 	titleSuffix: string;
+
+	/** Partner-facing home hero; optional; set per content repo in site.config.json */
+	landing?: LandingConfig;
 
 	auth: {
 		enabled: boolean;
@@ -175,124 +193,5 @@ export { defaultConfig };
  * Active config. When building with an external content repo, the generate-config
  * script replaces this line with the JSON-derived config. Otherwise it's the default.
  */
-export const siteConfig: SiteConfig = {
-	"name": "TradeYard",
-	"shortName": "TY",
-	"description": "Internal documentation for TradeYard — procurement and marketplace for landscape contractors.",
-	"titleSuffix": "TradeYard Docs",
-	"auth": {
-		"enabled": false,
-		"provider": "google"
-	},
-	"sections": {
-		"guides": {
-			"title": "Guides",
-			"description": "How to contribute, naming conventions, and team workflows.",
-			"order": 1
-		},
-		"designs": {
-			"title": "Designs",
-			"description": "Product and UX design. Use exploratory/ for options; specs/ for finalized build targets.",
-			"order": 2
-		},
-		"adr": {
-			"title": "ADRs",
-			"description": "Architecture Decision Records — durable technical commitments.",
-			"order": 3
-		},
-		"reference": {
-			"title": "Reference",
-			"description": "Technical references and system documentation.",
-			"order": 4
-		},
-		"operations": {
-			"title": "Operations",
-			"description": "Deployment, postmortems, stakeholder briefings, and runbooks.",
-			"order": 5
-		},
-		"archive": {
-			"title": "Archive",
-			"description": "Historical notes and superseded material.",
-			"order": 6
-		}
-	},
-	"tabs": {
-		"docs": {
-			"label": "Docs",
-			"sections": [
-				"reference",
-				"adr",
-				"operations"
-			]
-		},
-		"api": {
-			"label": "API"
-		},
-		"learn": {
-			"label": "Learn",
-			"sections": [
-				"guides",
-				"designs"
-			]
-		},
-		"archive": {
-			"label": "Archive",
-			"sections": [
-				"archive"
-			]
-		}
-	},
-	"features": {
-		"apiReference": false,
-		"chatPanel": false,
-		"adrTracks": true
-	},
-	"theme": {
-		"colors": {
-			"primary": {
-				"50": "#f7f6f3",
-				"100": "#ede9e1",
-				"200": "#d9d2c4",
-				"300": "#b8ab9a",
-				"400": "#918472",
-				"500": "#75685a",
-				"600": "#5f5549",
-				"700": "#4f463d",
-				"800": "#443d36",
-				"900": "#3b3530",
-				"950": "#211e1b"
-			},
-			"brand": {
-				"50": "#f3f7f4",
-				"100": "#e1ebe4",
-				"200": "#c4d7ca",
-				"300": "#9bb8a6",
-				"400": "#6d947c",
-				"500": "#4a7a5f",
-				"600": "#3a624d",
-				"700": "#305040",
-				"800": "#294235",
-				"900": "#23382e",
-				"950": "#121f19"
-			}
-		},
-		"light": {
-			"background": "#ffffff",
-			"foreground": "#1a1a1a",
-			"sidebarBg": "#f8f9f7",
-			"sidebarBorder": "#e1e7e0",
-			"codeBg": "#f4f6f4",
-			"accent": "#305040",
-			"accentLight": "#4a7a5f"
-		},
-		"dark": {
-			"background": "#141716",
-			"foreground": "#e2e8e4",
-			"sidebarBg": "#181c1a",
-			"sidebarBorder": "#2a322e",
-			"codeBg": "#1c221e",
-			"accent": "#9bb8a6",
-			"accentLight": "#c4d7ca"
-		}
-	}
-} as SiteConfig;
+export const siteConfig: SiteConfig = defaultConfig;
+
