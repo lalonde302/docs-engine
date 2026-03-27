@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
-import { authEnabled } from '@/lib/generatedAuthFlags';
+import { authEnabled } from '@/lib/generatedAuthFlags'; 
 
 function shouldSkipAuth() {
 	if (!authEnabled) return true;
