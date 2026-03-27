@@ -11,6 +11,8 @@ Multi-tenant documentation platform. One codebase; many sites. Content and brand
 
 Build: `prebuild` runs `scripts/fetch-content.sh` (clone when `CONTENT_REPO` is set) then `scripts/generate-config.mjs` (patch `site.config.ts` from `content/site.config.json`). Then `next build`.
 
+**Dev:** `npm run dev` runs the same fetch + `generate-config` step first (`predev`), so branding and nav always match `content/site.config.json`. If you skip that and only run `next dev`, the app still reads markdown from `content/` but **falls back to the Numanity defaults in `site.config.ts`** — wrong name, theme, and sections.
+
 ## Local development
 
 Symlink a content repo into `content/` so the app has something to render:
@@ -18,11 +20,14 @@ Symlink a content repo into `content/` so the app has something to render:
 ```bash
 rm -rf content
 ln -s /path/to/your-content-repo content
-npm run generate-config
 npm run dev
 ```
 
-Or set `CONTENT_REPO` and run `npm run build` (prebuild will clone into `content/`).
+`predev` applies `content/site.config.json` into `site.config.ts` automatically. To refresh config without restarting the dev server, run `npm run generate-config` in another terminal.
+
+If you are committing **engine-only** changes, restore the template assignment so you do not commit a patched config: `npm run reset-site-config` (or `git checkout -- site.config.ts`).
+
+Or set `CONTENT_REPO` and run `npm run build` (prebuild will clone into `content/`). **Do not** leave `CONTENT_REPO` exported in your shell while using a symlink — `fetch-content` removes `content/` and replaces it with a clone.
 
 ## Tech stack
 

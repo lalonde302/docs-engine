@@ -2,7 +2,7 @@
  * Site Configuration
  *
  * Multi-tenant docs engine configuration. The exported `siteConfig` is either:
- * 1. Generated from `content/site.config.json` at build time (when CONTENT_REPO is set)
+ * 1. Generated from `content/site.config.json` by `generate-config` (runs in predev / prebuild when that file exists)
  * 2. The hardcoded Numanity default below (when no external config exists)
  *
  * To rebrand for a different project, provide a site.config.json in your content repo.

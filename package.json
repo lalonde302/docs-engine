@@ -4,10 +4,12 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
+		"predev": "bash scripts/fetch-content.sh && node scripts/generate-config.mjs",
 		"dev": "next dev",
 		"prebuild": "bash scripts/fetch-content.sh && node scripts/generate-config.mjs",
 		"build": "next build",
 		"generate-config": "node scripts/generate-config.mjs",
+		"reset-site-config": "git checkout -- site.config.ts",
 		"start": "next start",
 		"lint": "next lint"
 	},
