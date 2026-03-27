@@ -1,5 +1,7 @@
 # Docs Engine
 
+**Canonical repository:** [github.com/lalonde302/docs-engine](https://github.com/lalonde302/docs-engine)
+
 Multi-tenant documentation platform. One codebase; many sites. Content and branding live in separate **content repos**. At build time, set `CONTENT_REPO` to a Git URL and the prebuild clones that repo into `content/` and applies its `site.config.json`.
 
 ## How it works
