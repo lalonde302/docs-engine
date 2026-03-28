@@ -33,6 +33,8 @@ Or set `CONTENT_REPO` and run `npm run build` (prebuild will clone into `content
 
 - Next.js 15 (App Router), Tailwind, NextAuth (Google), react-markdown, Scalar API Reference (optional). See `site.config.ts` and the content repo’s `site.config.json` for sections, tabs, theme, and feature flags.
 
+**Auth + Vercel:** Middleware does **not** import `lib/auth` (NextAuth’s full init is not Edge-safe on Vercel). It uses `getToken` from `next-auth/jwt` plus `AUTH_SECRET`. For content with `auth.enabled: true`, set **`AUTH_SECRET`** in the Vercel project environment.
+
 ## CI and deployment
 
 Do **not** add GitHub Actions here for build or deploy. Those workflows live in **content repos** (each project clones this engine and passes `CONTENT_REPO`). See `.github/README.md` in this repo.
