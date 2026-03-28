@@ -15,24 +15,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const EXTERNAL_JSON = path.join(ROOT, 'content', 'site.config.json');
 const SITE_CONFIG_TS = path.join(ROOT, 'site.config.ts');
-const AUTH_FLAGS_TS = path.join(ROOT, 'lib', 'generatedAuthFlags.ts');
-
-function writeAuthFlagsFromJson(json) {
-	const auth = json.auth || {};
-	const enabled = auth.enabled === true;
-	const domain =
-		typeof auth.domain === 'string' && auth.domain.length > 0 ? auth.domain : null;
-	const domainTs = domain == null ? 'undefined' : JSON.stringify(domain);
-	const body = `/**
- * Auto-generated from content/site.config.json by scripts/generate-config.mjs.
- * Edge-safe — middleware and auth.config must not import site.config.ts.
- */
-export const authEnabled = ${enabled};
-export const authDomain: string | undefined = ${domainTs};
-`;
-	fs.writeFileSync(AUTH_FLAGS_TS, body, 'utf-8');
-	console.log('[generate-config] lib/generatedAuthFlags.ts updated (Edge-safe auth flags).');
-}
 
 if (!fs.existsSync(EXTERNAL_JSON)) {
 	console.log('[generate-config] No content/site.config.json found — using default config.');
@@ -42,7 +24,6 @@ if (!fs.existsSync(EXTERNAL_JSON)) {
 console.log('[generate-config] Found content/site.config.json — patching site.config.ts');
 
 const json = JSON.parse(fs.readFileSync(EXTERNAL_JSON, 'utf-8'));
-writeAuthFlagsFromJson(json);
 const serialized = JSON.stringify(json, null, '\t');
 
 let source = fs.readFileSync(SITE_CONFIG_TS, 'utf-8');

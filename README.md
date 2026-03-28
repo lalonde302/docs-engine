@@ -9,7 +9,7 @@ Multi-tenant documentation platform. One codebase; many sites. Content and brand
 - **This repo** = Next.js app (sidebar, markdown rendering, auth, theme). No project content is committed here; the checked-in `content/` folder only holds a placeholder README.
 - **Content repos** = at the **repository root**: `site.config.json` plus section directories (`adr/`, `designs/`, `guides/`, etc.). Each product or team maintains its own content repo.
 
-Build: `prebuild` runs `scripts/fetch-content.sh` (clone when `CONTENT_REPO` is set) then `scripts/generate-config.mjs` (patch `site.config.ts` and `lib/generatedAuthFlags.ts` from `content/site.config.json`). The auth flags file stays **small and Edge-safe** so Vercel middleware does not import the full `site.config` bundle. Then `next build`.
+Build: `prebuild` runs `scripts/fetch-content.sh` (clone when `CONTENT_REPO` is set) then `scripts/generate-config.mjs` (patch `site.config.ts` from `content/site.config.json`). Then `next build`.
 
 **Dev:** `npm run dev` runs the same fetch + `generate-config` step first (`predev`), so branding and nav always match `content/site.config.json`. If you skip that and only run `next dev`, the app still reads markdown from `content/` but **falls back to the Numanity defaults in `site.config.ts`** — wrong name, theme, and sections.
 
@@ -25,15 +25,30 @@ npm run dev
 
 `predev` applies `content/site.config.json` into `site.config.ts` automatically. To refresh config without restarting the dev server, run `npm run generate-config` in another terminal.
 
-If you are committing **engine-only** changes, restore the template files so you do not commit generated config: `npm run reset-site-config` (restores `site.config.ts` and `lib/generatedAuthFlags.ts`).
+If you are committing **engine-only** changes, restore the template config so you do not commit generated output: `npm run reset-site-config` (restores `site.config.ts`).
 
 Or set `CONTENT_REPO` and run `npm run build` (prebuild will clone into `content/`). **Do not** leave `CONTENT_REPO` exported in your shell while using a symlink — `fetch-content` removes `content/` and replaces it with a clone.
 
 ## Tech stack
 
-- Next.js 15 (App Router), Tailwind, NextAuth (Google), react-markdown, Scalar API Reference (optional). See `site.config.ts` and the content repo’s `site.config.json` for sections, tabs, theme, and feature flags.
+- Next.js 15 (App Router), Tailwind, NextAuth (Google), react-markdown, Scalar API Reference (optional). See `site.config.ts` and the content repo's `site.config.json` for sections, tabs, theme, and feature flags.
 
-**Auth + Vercel:** Middleware does **not** import `lib/auth` (NextAuth’s full init is not Edge-safe on Vercel). It uses `getToken` from `next-auth/jwt` plus `AUTH_SECRET`. For content with `auth.enabled: true`, set **`AUTH_SECRET`** in the Vercel project environment.
+## Auth + Vercel
+
+Middleware and NextAuth config read auth settings entirely from **runtime environment variables** — they do **not** import any project-local modules. This keeps middleware Edge-safe on Vercel.
+
+| Env var | Required | Purpose |
+|---------|----------|---------|
+| `DOCS_AUTH_ENABLED` | Yes (set `true` to gate the site) | Middleware skips auth when this is anything other than `"true"`. |
+| `AUTH_SECRET` | When auth is on | NextAuth JWT secret; middleware uses it with `getToken` from `next-auth/jwt`. |
+| `DOCS_AUTH_DOMAIN` | When restricting by Google domain | e.g. `numanity.us`; limits sign-in to that domain. Omit for any Google account. |
+| `GOOGLE_CLIENT_ID` | When auth is on | Google OAuth client ID. |
+| `GOOGLE_CLIENT_SECRET` | When auth is on | Google OAuth client secret. |
+| `SKIP_AUTH` | Optional | `true` bypasses auth (useful for staging / local). In dev mode auth is skipped by default. |
+
+For **unauthenticated** docs sites (e.g. TradeYard), omit `DOCS_AUTH_ENABLED` or set it to `false` — no other auth env vars are needed and middleware passes all requests through.
+
+`site.config.json` still has an `auth` section (`enabled`, `domain`) for editorial / UI semantics (sign-in page copy, local dev defaults), but it no longer drives runtime auth gating on Vercel.
 
 ## CI and deployment
 

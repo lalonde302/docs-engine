@@ -1,14 +1,9 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { authEnabled } from '@/lib/generatedAuthFlags';
 
-/**
- * Edge middleware must not import `@/lib/auth` or `@/site.config` — Vercel rejects that graph.
- * Session check uses `getToken` from `next-auth/jwt` only (Edge-safe).
- */
 function shouldSkipAuth() {
-	if (!authEnabled) return true;
+	if (process.env.DOCS_AUTH_ENABLED !== 'true') return true;
 
 	const flag = process.env.SKIP_AUTH;
 	if (flag === 'true') return true;

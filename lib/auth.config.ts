@@ -1,6 +1,8 @@
 import type { NextAuthConfig } from 'next-auth';
 import Google from 'next-auth/providers/google';
-import { authDomain, authEnabled } from '@/lib/generatedAuthFlags';
+
+const authEnabled = process.env.DOCS_AUTH_ENABLED === 'true';
+const authDomain = process.env.DOCS_AUTH_DOMAIN || undefined;
 
 export const authConfig = {
 	providers: [
