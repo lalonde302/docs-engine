@@ -1,6 +1,7 @@
-import { getToken } from 'next-auth/jwt';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import NextAuth from 'next-auth';
+import { authConfig } from '@/lib/auth.config';
+
+const { auth } = NextAuth(authConfig);
 
 function shouldSkipAuth() {
 	if (process.env.DOCS_AUTH_ENABLED !== 'true') return true;
@@ -12,15 +13,13 @@ function shouldSkipAuth() {
 	return process.env.NODE_ENV === 'development';
 }
 
-export async function middleware(request: NextRequest) {
-	const { pathname } = request.nextUrl;
+export default auth((req) => {
+	if (shouldSkipAuth()) return;
 
-	if (shouldSkipAuth()) {
-		return NextResponse.next();
-	}
+	const { pathname } = req.nextUrl;
 
 	if (pathname.startsWith('/auth/') || pathname.startsWith('/api/auth/')) {
-		return NextResponse.next();
+		return;
 	}
 
 	if (
@@ -28,25 +27,15 @@ export async function middleware(request: NextRequest) {
 		pathname.startsWith('/favicon') ||
 		pathname.includes('.')
 	) {
-		return NextResponse.next();
+		return;
 	}
 
-	const secret = process.env.AUTH_SECRET;
-	if (!secret) {
-		console.error('[middleware] AUTH_SECRET is missing; cannot validate session');
-		return NextResponse.next();
-	}
-
-	const token = await getToken({ req: request, secret });
-
-	if (!token) {
-		const signInUrl = new URL('/auth/signin', request.url);
+	if (!req.auth) {
+		const signInUrl = new URL('/auth/signin', req.url);
 		signInUrl.searchParams.set('callbackUrl', pathname);
-		return NextResponse.redirect(signInUrl);
+		return Response.redirect(signInUrl);
 	}
-
-	return NextResponse.next();
-}
+});
 
 export const config = {
 	matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
