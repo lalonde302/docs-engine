@@ -3,10 +3,17 @@ import { authConfig } from '@/lib/auth.config';
 
 const { auth } = NextAuth(authConfig);
 
-function shouldSkipAuth() {
-	if (process.env.DOCS_AUTH_ENABLED !== 'true') return true;
+function envFlagTrue(key: string): boolean {
+	const v = process.env[key];
+	return v !== undefined && v.toLowerCase() === 'true';
+}
 
-	const flag = process.env.SKIP_AUTH;
+function shouldSkipAuth() {
+	// Bracket keys avoid static env replacement; values must exist at build time on CI
+	// (see tradeyard-docs vercel-deploy.yml: copy .vercel/.env → .env.production.local).
+	if (!envFlagTrue('DOCS_AUTH_ENABLED')) return true;
+
+	const flag = process.env['SKIP_AUTH'];
 	if (flag === 'true') return true;
 	if (flag === 'false') return false;
 
