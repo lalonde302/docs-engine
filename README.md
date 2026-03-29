@@ -40,7 +40,6 @@ Middleware and NextAuth config read auth settings entirely from **runtime enviro
 | Env var | Required | Purpose |
 |---------|----------|---------|
 | `DOCS_AUTH_ENABLED` | Yes (set `true` to gate the site) | Middleware skips auth when this is anything other than `"true"`. |
-| `AUTH_SECRET` | When auth is on | NextAuth JWT secret; middleware uses it with `getToken` from `next-auth/jwt`. |
 | `DOCS_AUTH_DOMAIN` | When restricting by Google domain | e.g. `numanity.us`; limits sign-in to that domain. Omit for any Google account. |
 | `GOOGLE_CLIENT_ID` | When auth is on | Google OAuth client ID. |
 | `GOOGLE_CLIENT_SECRET` | When auth is on | Google OAuth client secret. |

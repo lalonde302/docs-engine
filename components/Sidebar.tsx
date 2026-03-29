@@ -281,7 +281,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 																	: 'text-gray-600 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-200'
 															}`}
 														>
-															Tracks (tree view)
+															ADR Homepage
 														</Link>
 													</li>
 												)}
