@@ -123,7 +123,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 			});
 	};
 
-	// Auto-expand section containing current page
+	// Auto-expand section (and subsection) containing current page
 	useEffect(() => {
 		if (pathname) {
 			const pathParts = pathname.split('/');
@@ -132,8 +132,15 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 				setExpandedSections((prev) => new Set([...prev, 'api-reference']));
 			} else if (currentSection) {
 				setExpandedSections((prev) => {
-					if (prev.has(currentSection)) return prev;
-					return new Set([...prev, currentSection]);
+					const next = new Set(prev);
+					next.add(currentSection);
+					// Auto-expand subsection when path has 3+ segments (e.g. /reference/personas/maria-kowalski)
+					if (pathParts.length >= 4) {
+						const subsectionSlug = pathParts[2];
+						next.add(`${currentSection}-${subsectionSlug}`);
+					}
+					if (next.size === prev.size && [...next].every((k) => prev.has(k))) return prev;
+					return next;
 				});
 			}
 		}
@@ -304,6 +311,44 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 													);
 												})}
 											</ul>
+											{/* Subsections (subdirectories) */}
+											{section.subsections?.map((sub) => {
+												const subKey = `${section.slug}-${sub.slug}`;
+												const isSubExpanded = expandedSections.has(subKey);
+												return (
+													<div key={sub.slug} className="mt-1">
+														<button
+															onClick={() => toggleSection(subKey)}
+															className="w-full pl-7 pr-4 py-1 flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+														>
+															<ChevronIcon expanded={isSubExpanded} />
+															{sub.title}
+														</button>
+														{isSubExpanded && (
+															<ul className="mt-1">
+																{sub.docs.map((doc) => {
+																	const href = `/${section.slug}/${doc.slug}`;
+																	const isActive = pathname === href;
+																	return (
+																		<li key={doc.slug}>
+																			<Link
+																				href={href}
+																				className={`block pl-12 pr-4 py-1.5 text-sm transition-colors ${
+																					isActive
+																						? 'text-brand-800 dark:text-white font-medium'
+																						: 'text-gray-600 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-200'
+																				}`}
+																			>
+																				{doc.title}
+																			</Link>
+																		</li>
+																	);
+																})}
+															</ul>
+														)}
+													</div>
+												);
+											})}
 											{/* Archived subsection */}
 											{hasArchivedDocs && (
 												<div className="mt-2">
@@ -453,26 +498,65 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 										{section.title}
 									</button>
 									{isExpanded && (
-										<ul className="mt-1">
-											{section.docs.map((doc) => {
-												const href = `/${section.slug}/${doc.slug}`;
-												const isActive = pathname === href;
+										<>
+											<ul className="mt-1">
+												{section.docs.map((doc) => {
+													const href = `/${section.slug}/${doc.slug}`;
+													const isActive = pathname === href;
+													return (
+														<li key={doc.slug}>
+															<Link
+																href={href}
+																className={`block pl-9 pr-4 py-1.5 text-sm transition-colors ${
+																	isActive
+																		? 'text-brand-800 dark:text-white font-medium'
+																		: 'text-gray-600 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-200'
+																}`}
+															>
+																{doc.title}
+															</Link>
+														</li>
+													);
+												})}
+											</ul>
+											{section.subsections?.map((sub) => {
+												const subKey = `${section.slug}-${sub.slug}`;
+												const isSubExpanded = expandedSections.has(subKey);
 												return (
-													<li key={doc.slug}>
-														<Link
-															href={href}
-															className={`block pl-9 pr-4 py-1.5 text-sm transition-colors ${
-																isActive
-																	? 'text-brand-800 dark:text-white font-medium'
-																	: 'text-gray-600 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-200'
-															}`}
+													<div key={sub.slug} className="mt-1">
+														<button
+															onClick={() => toggleSection(subKey)}
+															className="w-full pl-7 pr-4 py-1 flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
 														>
-															{doc.title}
-														</Link>
-													</li>
+															<ChevronIcon expanded={isSubExpanded} />
+															{sub.title}
+														</button>
+														{isSubExpanded && (
+															<ul className="mt-1">
+																{sub.docs.map((doc) => {
+																	const href = `/${section.slug}/${doc.slug}`;
+																	const isActive = pathname === href;
+																	return (
+																		<li key={doc.slug}>
+																			<Link
+																				href={href}
+																				className={`block pl-12 pr-4 py-1.5 text-sm transition-colors ${
+																					isActive
+																						? 'text-brand-800 dark:text-white font-medium'
+																						: 'text-gray-600 dark:text-gray-400 hover:text-brand-700 dark:hover:text-gray-200'
+																				}`}
+																			>
+																				{doc.title}
+																			</Link>
+																		</li>
+																	);
+																})}
+															</ul>
+														)}
+													</div>
 												);
 											})}
-										</ul>
+										</>
 									)}
 								</div>
 							);
