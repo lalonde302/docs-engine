@@ -32,7 +32,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
 			<Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
 			{/* Main content - add top padding when sidebar is closed to avoid hamburger overlap */}
-			<main className={`flex-1 overflow-auto ${!sidebarOpen ? 'pt-16' : ''}`}>
+			<main className={`flex-1 min-h-0 overflow-auto ${!sidebarOpen ? 'pt-16' : ''}`}>
 				{children}
 			</main>
 

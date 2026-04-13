@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getDocBySlug, getAllDocSlugs, getDocsSections } from '@/lib/docs';
+import { AdrReadingView } from '@/components/AdrReadingView';
 import { MarkdownContent } from '@/components/MarkdownContent';
 import { MarkdownWithDiagrams } from '@/components/MarkdownWithDiagrams';
 import { siteConfig } from '@/site.config';
@@ -94,6 +95,18 @@ export default async function DocPage({ params }: PageProps) {
 	}
 
 	const hasDiagrams = doc.content.includes('```mermaid');
+
+	if (section === 'adr') {
+		return (
+			<AdrReadingView
+				currentSlug={slugStr}
+				title={doc.title}
+				description={doc.description}
+				content={doc.content}
+				hasDiagrams={hasDiagrams}
+			/>
+		);
+	}
 
 	return (
 		<div className={`p-8 mx-auto ${hasDiagrams ? 'max-w-6xl' : 'max-w-4xl'}`}>
