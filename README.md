@@ -53,6 +53,27 @@ For **unauthenticated** docs sites (e.g. TradeYard), omit `DOCS_AUTH_ENABLED` or
 
 Do **not** add GitHub Actions here for build or deploy. Those workflows live in **content repos** (each project clones this engine and passes `CONTENT_REPO`). See `.github/README.md` in this repo.
 
+## ADR cross-links + preview panel
+
+### What readers see
+
+- **Desktop (≥1024px)**: when you click a link to another ADR while reading an ADR, the target ADR opens in a **right-side preview panel**. The current ADR stays in place.
+- **Small screens**: the same link navigates normally to the target ADR page (no panel).
+- **Section jumps**: links with `#fragments` scroll to the matching heading inside the preview panel (or the page on small screens).
+
+### How to author ADR links in markdown
+
+- **Link to another ADR**: use standard markdown links that resolve to `/adr/...`, for example:
+	- `[ADR-0026](adr-0026-jwt-identity-only-profiles-authorization.md)`
+	- `[ADR-0026](/adr/adr-0026-jwt-identity-only-profiles-authorization.md)`
+- **Link to a specific section**: append a fragment that matches the heading’s generated id (GitHub-style slugs), for example:
+	- `[ADR-0026 — Context](adr-0026-jwt-identity-only-profiles-authorization.md#context)`
+
+### Implementation notes (engine)
+
+- **Heading anchors**: markdown rendering runs `rehype-slug` so headings get stable `id`s for `#fragment` linking.
+- **Preview content fetch**: the panel loads content via `GET /api/doc?section=adr&slug=...` (see `app/api/doc/route.ts`). This endpoint validates `section` and `slug` and returns `{ title, description, content, section, slug }`.
+
 ## Upstream
 
 This codebase was extracted for reuse. Related lineages may publish their own copies; treat this repository as the **canonical engine** for consumers that depend on it.
